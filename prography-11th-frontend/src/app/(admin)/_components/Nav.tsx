@@ -9,14 +9,14 @@ export default function Nav() {
 
   const links = [
     { name: "회원 관리", path: "/members" },
-    { name: "출결 관리", path: "/attendance" },
+    { name: "출결 관리", path: "/attendances" },
     { name: "세션 관리", path: "/sessions" },
   ];
 
   return (
     <nav
       className={clsx(
-        "h-full w-1/4",
+        "min-h-dvh w-1/4",
         "flex flex-col gap-20",
         "px-5 py-8",
         "bg-gray-300",
@@ -25,7 +25,7 @@ export default function Nav() {
       <h1 className={clsx("text-3xl font-bold")}>로고</h1>
       <ul className={clsx("w-full", "flex flex-1 flex-col items-center gap-1")}>
         {links.map(({ name, path }) => {
-          const isActive = pathname === path;
+          const isActive = pathname.includes(path);
 
           return (
             <li key={path}>
