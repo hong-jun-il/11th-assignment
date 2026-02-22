@@ -5,7 +5,7 @@ import { type OptionType, Select } from "@/components/ui/Select";
 import { TextInput } from "@/components/ui/TextInput";
 import clsx from "clsx";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChangeEvent, useRef } from "react";
+import { SubmitEvent, useRef } from "react";
 
 export type MemberSearchType = "name" | "loginId" | "phone";
 
@@ -36,26 +36,20 @@ export default function MemberSearch() {
   const inputRef = useRef<HTMLInputElement>(null);
   const optionRef = useRef<HTMLSelectElement>(null);
 
-  const handleChangeOptions = (
-    e: ChangeEvent<HTMLSelectElement, HTMLSelectElement>,
-  ) => {
-    const value = e.target.value;
+  const handleSearch = (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    const params = new URLSearchParams(searchParams);
-
-    params.set("searchType", value);
-
-    router.push(`?${params.toString()}`);
-  };
-
-  const handleSearch = () => {
-    if (!inputRef.current) {
+    if (!inputRef.current || !optionRef.current) {
       return;
     }
 
-    const searchValue = inputRef.current.value;
+    const searchType = optionRef.current.value;
+    const searchValue = inputRef.current.value.trim();
 
     const params = new URLSearchParams(searchParams);
+
+    params.set("searchType", searchType);
+    params.set("page", "1");
 
     if (searchValue) {
       params.set("searchValue", searchValue);
@@ -63,18 +57,32 @@ export default function MemberSearch() {
       params.delete("searchValue");
     }
 
+    router.push(`?${params.toString()}`);
+  };
+
+  const handleReset = () => {
+    if (!inputRef.current) {
+      return;
+    }
+
+    inputRef.current.value = "";
+
+    const params = new URLSearchParams(searchParams);
+
     params.set("page", "1");
+    params.delete("searchValue");
 
     router.push(`?${params.toString()}`);
   };
 
   return (
-    <div
+    <form
       className={clsx(
         "w-full",
         "flex items-center justify-between",
         "mb-5 px-8",
       )}
+      onSubmit={handleSearch}
     >
       <div className={clsx("flex w-1/2 items-center gap-5")}>
         <h2
@@ -92,7 +100,6 @@ export default function MemberSearch() {
           options={searchOptions}
           className="max-w-fit!"
           defaultValue={selectDefaultValue}
-          onChange={handleChangeOptions}
         />
         <TextInput
           ref={inputRef}
@@ -103,14 +110,17 @@ export default function MemberSearch() {
         />
       </div>
 
-      <Button
-        text="검색"
-        onClick={handleSearch}
-        className={clsx(
-          "bg-gray-400",
-          "transition-colors duration-200 hover:bg-black",
-        )}
-      />
-    </div>
+      <div className={clsx("flex gap-3")}>
+        <Button
+          type="submit"
+          text="검색"
+          className={clsx(
+            "bg-gray-400",
+            "transition-colors duration-200 hover:bg-black",
+          )}
+        />
+        <Button text="초기화" onClick={handleReset} />
+      </div>
+    </form>
   );
 }

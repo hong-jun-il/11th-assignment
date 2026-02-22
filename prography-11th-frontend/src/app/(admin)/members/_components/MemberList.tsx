@@ -1,13 +1,14 @@
 "use client";
 
 import Pagination from "@/components/ui/Pagination";
-import { useGetMembers } from "@/hooks/queries";
+import { getMembers, useGetMembers } from "@/hooks/queries";
 import { MEMBER_ROLE_MATCHER, MEMBER_STATUS_MATCHER } from "@/utils/matcher";
 import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { MemberSearchType } from "./MemberSearch";
+import Button from "@/components/ui/Button";
 
 const tableHead = [
   "순서",
@@ -21,7 +22,7 @@ const tableHead = [
 ];
 
 export default function MemberList() {
-  const queryClient = useQueryClient();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -38,14 +39,27 @@ export default function MemberList() {
   const totalMembers = data.data?.totalElements;
   const members = data.data?.content ?? [];
 
+  // 다음 페이지가 존재할 시 다음 페이지를 미리 prefetch 합니다
+  const queryClient = useQueryClient();
   useEffect(() => {
-    if (data?.data && currentPage < data.data.totalPages - 1) {
-      const nextPage = currentPage + 1;
+    if (data?.data && currentPage < data.data.totalPages) {
+      const nextPage = currentPage;
+
+      queryClient.prefetchQuery({
+        queryKey: ["members", nextPage, currentSearchType, currentSearchValue],
+        queryFn: () =>
+          getMembers({
+            page: nextPage,
+            searchType: currentSearchType,
+            searchValue: currentSearchValue,
+          }),
+        staleTime: 1000 * 60 * 5,
+      });
     }
   }, [currentPage]);
 
   return (
-    <div className={clsx("flex flex-1 flex-col justify-between", "px-3")}>
+    <div className={clsx("flex flex-1 flex-col justify-between gap-5", "px-3")}>
       <div className={clsx("space-y-5")}>
         <h3 className={clsx("text-lg font-semibold")}>전체 {totalMembers}명</h3>
 
@@ -61,30 +75,50 @@ export default function MemberList() {
           </thead>
 
           <tbody>
-            {members.map((member, i) => (
-              <tr
-                key={member.id}
-                className={clsx(
-                  "cursor-pointer hover:bg-amber-100",
-                  "transition-colors duration-150",
-                )}
-              >
-                <th>{i + 1}</th>
-                <td className={clsx("py-2 text-center")}>{member.name}</td>
-                <td className={clsx("py-2 text-center")}>{member.partName}</td>
-                <td className={clsx("py-2 text-center")}>{member.teamName}</td>
-                <td className={clsx("py-2 text-center")}>{member.loginId}</td>
-                <td className={clsx("py-2 text-center")}>{member.phone}</td>
-                <td className={clsx("py-2 text-center")}>
-                  {MEMBER_ROLE_MATCHER[member.role]}
-                </td>
-                <td className={clsx("py-2 text-center")}>
-                  {MEMBER_STATUS_MATCHER[member.status]}
+            {members.length > 0 ? (
+              members.map((member, i) => (
+                <tr
+                  key={member.id}
+                  onClick={() => router.push(`/members/${member.id}`)}
+                  className={clsx(
+                    "cursor-pointer hover:bg-amber-100",
+                    "transition-colors duration-150",
+                  )}
+                >
+                  <th>{i + 1}</th>
+                  <td className={clsx("py-2 text-center")}>{member.name}</td>
+                  <td className={clsx("py-2 text-center")}>
+                    {member.partName}
+                  </td>
+                  <td className={clsx("py-2 text-center")}>
+                    {member.teamName}
+                  </td>
+                  <td className={clsx("py-2 text-center")}>{member.loginId}</td>
+                  <td className={clsx("py-2 text-center")}>{member.phone}</td>
+                  <td className={clsx("py-2 text-center")}>
+                    {MEMBER_ROLE_MATCHER[member.role]}
+                  </td>
+                  <td className={clsx("py-2 text-center")}>
+                    {MEMBER_STATUS_MATCHER[member.status]}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr className="h-[30dvh]">
+                <td
+                  colSpan={tableHead.length}
+                  className="text-center text-gray-500"
+                >
+                  검색 결과가 없습니다.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
+      </div>
+
+      <div className={clsx("flex justify-end")}>
+        <Button text="추가" />
       </div>
 
       <div className={clsx("flex justify-center")}>

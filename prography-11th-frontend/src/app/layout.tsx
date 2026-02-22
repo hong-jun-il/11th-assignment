@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={clsx("h-dvh min-h-dvh w-full")}>
+      <body className={clsx("h-full min-h-dvh w-full")}>
         <RQProvider>{children}</RQProvider>
       </body>
     </html>

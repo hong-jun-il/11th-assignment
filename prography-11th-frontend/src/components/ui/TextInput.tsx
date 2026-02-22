@@ -3,16 +3,17 @@
 import clsx from "clsx";
 import { ComponentProps, forwardRef } from "react";
 
-type Props = ComponentProps<"input"> & { name: string; id: string };
+type Props = Omit<ComponentProps<"input">, "type">;
 
 export const TextInput = forwardRef<HTMLInputElement, Props>(
-  ({ type = "text", name, id, className, ...props }, ref) => {
+  ({ name, id, className, readOnly, ...props }, ref) => {
     return (
       <input
         ref={ref}
-        type={type}
+        type="text"
         name={name}
         id={id}
+        disabled={readOnly}
         className={clsx(
           "h-10 w-full min-w-[200px]",
           "px-3",
@@ -21,6 +22,7 @@ export const TextInput = forwardRef<HTMLInputElement, Props>(
           "focus:border-black",
           "transition-colors duration-200",
           "outline-none",
+          "disabled:text-gray-400",
           className,
         )}
         {...props}

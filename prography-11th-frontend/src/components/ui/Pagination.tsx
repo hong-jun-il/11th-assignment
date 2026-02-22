@@ -11,22 +11,18 @@ type Props = {
 
 const WINDOW_SIZE = 5;
 
-export default function Pagination({ totalPages }: Props) {
+export default function Pagination({ totalPages = 1 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const currentPage = Number(searchParams.get("page")) || 1;
 
-  let startPage = Math.max(1, currentPage - Math.floor(WINDOW_SIZE / 2));
-  let endPage = startPage + WINDOW_SIZE - 1;
-
-  if (endPage > totalPages) {
-    endPage = totalPages;
-    startPage = Math.max(1, endPage - WINDOW_SIZE + 1);
-  }
+  const startPage =
+    Math.floor((currentPage - 1) / WINDOW_SIZE) * WINDOW_SIZE + 1;
+  const endPage = Math.min(startPage + WINDOW_SIZE - 1, totalPages);
 
   const pages = Array.from(
-    { length: endPage - startPage + 1 },
+    { length: endPage - startPage + 1 || 1 },
     (_, i) => startPage + i,
   );
 
@@ -39,7 +35,7 @@ export default function Pagination({ totalPages }: Props) {
   };
 
   return (
-    <div className={clsx("flex gap-5")}>
+    <div className={clsx("w-fit", "flex gap-5")}>
       <div className={clsx("flex")}>
         <button disabled={currentPage <= 1} onClick={() => handlePagination(1)}>
           <PaginationLeftSkip size={18} />
@@ -52,9 +48,9 @@ export default function Pagination({ totalPages }: Props) {
         </button>
       </div>
 
-      <ul className={clsx("flex gap-2")}>
+      <ul className={clsx("flex flex-1 justify-between gap-2")}>
         {pages.map((page) => (
-          <li key={page}>
+          <li key={page} className="w-5 text-center">
             <button
               className={clsx(currentPage === page && "font-bold underline")}
               disabled={currentPage === page}

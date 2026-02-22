@@ -18,7 +18,7 @@ export default function RQProvider({ children }: Props) {
             retryOnMount: true,
             refetchOnWindowFocus: true,
             retry: 3,
-            staleTime: 1000 * 60,
+            staleTime: 5 * 1000 * 60,
             gcTime: 5 * 1000 * 60,
           },
         },

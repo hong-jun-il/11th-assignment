@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * 리액트의 Suspense와 ErrorBoundary를 결합한 커스텀 컴포넌트입니다.
  * 클라이언트 전용이며, 서버에서는 사용할 수 없습니다.
@@ -8,6 +10,7 @@
 
 import { Suspense, type ComponentProps } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import ErrorComponent from "./ui/ErrorComponent";
 
 type ErrorBoundaryProps = Omit<
   ComponentProps<typeof ErrorBoundary>,
@@ -18,7 +21,7 @@ type SuspenseProps = Omit<ComponentProps<typeof Suspense>, "fallback">;
 
 type Props = ErrorBoundaryProps &
   SuspenseProps & {
-    errorFallback: NonNullable<
+    errorFallback?: NonNullable<
       ComponentProps<typeof ErrorBoundary>["fallbackRender"]
     >;
     pendingFallback: ComponentProps<typeof Suspense>["fallback"];
@@ -31,7 +34,12 @@ export default function AsyncBoundary({
   ...errorBoundaryProps
 }: Props) {
   return (
-    <ErrorBoundary fallbackRender={errorFallback} {...errorBoundaryProps}>
+    <ErrorBoundary
+      fallbackRender={
+        errorFallback || ((props) => <ErrorComponent {...props} />)
+      }
+      {...errorBoundaryProps}
+    >
       <Suspense fallback={pendingFallback}>{children}</Suspense>
     </ErrorBoundary>
   );
