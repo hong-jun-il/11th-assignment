@@ -6,9 +6,10 @@ import { MEMBER_ROLE_MATCHER, MEMBER_STATUS_MATCHER } from "@/utils/matcher";
 import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MemberSearchType } from "./MemberSearch";
 import Button from "@/components/ui/Button";
+import CreateMemberModal from "./CreateMember.modal";
 
 const tableHead = [
   "순서",
@@ -24,6 +25,8 @@ const tableHead = [
 export default function MemberList() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
   const currentPage = Number(searchParams.get("page")) || 1;
   const currentSearchType: MemberSearchType = (searchParams.get("searchType") ||
@@ -118,12 +121,18 @@ export default function MemberList() {
       </div>
 
       <div className={clsx("flex justify-end")}>
-        <Button text="추가" />
+        <Button
+          text="추가"
+          type="button"
+          onClick={() => setModalIsOpen(true)}
+        />
       </div>
 
       <div className={clsx("flex justify-center")}>
         <Pagination totalPages={data.data?.totalPages ?? 1} />
       </div>
+
+      {modalIsOpen && <CreateMemberModal />}
     </div>
   );
 }

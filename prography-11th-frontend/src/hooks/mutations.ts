@@ -16,9 +16,11 @@ export function useUpdateMember(id: number) {
 
       return res.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["member", id] });
-      queryClient.invalidateQueries({ queryKey: ["members"] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["member", id] }),
+        queryClient.invalidateQueries({ queryKey: ["members"] }),
+      ]);
       alert("수정 완료!");
     },
     onError: (error) => {
@@ -47,9 +49,11 @@ export function useDeleteMember() {
 
       return res.data;
     },
-    onSuccess: (_, deletedId) => {
-      queryClient.invalidateQueries({ queryKey: ["member", deletedId] });
-      queryClient.invalidateQueries({ queryKey: ["members"] });
+    onSuccess: async (_, deletedId) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["member", deletedId] }),
+        queryClient.invalidateQueries({ queryKey: ["members"] }),
+      ]);
       alert("회원 탈퇴 처리되었습니다");
     },
     onError: (error) => {

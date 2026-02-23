@@ -13,12 +13,10 @@ export default async function MemberDetailPage({ params }: Props) {
   const { id } = await params;
 
   return (
-    <div>
+    <AsyncBoundary pendingFallback={<LoadingComponent />}>
       <MemberFormProvider>
-        <AsyncBoundary pendingFallback={<LoadingComponent />}>
-          <MemberInfo id={id} />
-        </AsyncBoundary>
+        <MemberInfo id={id} />
       </MemberFormProvider>
-    </div>
+    </AsyncBoundary>
   );
 }

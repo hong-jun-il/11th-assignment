@@ -2,13 +2,13 @@
 
 import { ComponentProps } from "react";
 import { OptionType, Select } from "../Select";
-import { FieldValues, Path, useFormContext } from "react-hook-form";
+import { FieldValues, Path, useFormContext, Controller } from "react-hook-form";
 import clsx from "clsx";
 
-type Props<
-  T extends FieldValues,
-  F extends string | number,
-> = ComponentProps<"select"> & {
+type Props<T extends FieldValues, F extends string | number> = Omit<
+  ComponentProps<"select">,
+  "name"
+> & {
   id: string;
   name: Path<T>;
   options: OptionType<F>[];
@@ -19,10 +19,7 @@ export default function RHFSelect<
   T extends FieldValues,
   F extends string | number,
 >({ id, name, options, label, ...props }: Props<T, F>) {
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext<T>();
+  const { control } = useFormContext<T>();
 
   return (
     <div>
@@ -31,12 +28,20 @@ export default function RHFSelect<
           {label}
         </label>
       )}
-      <Select id={id} {...register(name)} options={options} {...props} />
-      {errors[name] && errors[name].message && (
-        <p className={clsx("px-1 text-xs text-red-500")}>
-          {errors[name].message.toString()}
-        </p>
-      )}
+      <Controller
+        name={name}
+        control={control}
+        render={({ field, fieldState: { error } }) => (
+          <>
+            <Select {...props} id={id} options={options} {...field} />
+            {error && (
+              <p className={clsx("px-1 text-xs text-red-500")}>
+                {error.message?.toString()}
+              </p>
+            )}
+          </>
+        )}
+      />
     </div>
   );
 }

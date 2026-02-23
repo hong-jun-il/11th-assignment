@@ -26,16 +26,16 @@ const defaultValues: MemberFormInputType = {
   // password: "",
   name: "",
   phone: "",
-  cohortId: "",
-  partId: "",
-  teamId: "",
+  cohortId: 0,
+  partId: 0,
+  teamId: 0,
 };
 
 export default function MemberFormProvider({ children }: Props) {
   const method = useForm({
     mode: "all",
     resolver: zodResolver(schema),
-    // defaultValues,
+    defaultValues,
   });
 
   return <FormProvider {...method}>{children}</FormProvider>;

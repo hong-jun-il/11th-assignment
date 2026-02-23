@@ -13,13 +13,14 @@ import type {
   MemberFormOutputType,
 } from "../../_components/MemberFormProvider";
 import { useDeleteMember, useUpdateMember } from "@/hooks/mutations";
+import { useEffect } from "react";
 
 type Props = {
   id: string;
 };
 
 export default function MemberInfo({ id }: Props) {
-  const { handleSubmit } = useFormContext<MemberFormInputType>();
+  const { handleSubmit, reset } = useFormContext<MemberFormInputType>();
 
   const { data: memberdata } = useGetMember(+id);
 
@@ -50,13 +51,6 @@ export default function MemberInfo({ id }: Props) {
       label: team.name,
     })) ?? [];
 
-  const partId =
-    partOptions.find((part) => part.label === memberdata.data?.partName)
-      ?.value || 1;
-  const teamId =
-    teamOptions.find((team) => team.label === memberdata.data?.teamName)
-      ?.value || 1;
-
   const onSubmit = (data: MemberFormOutputType) => {
     updateMutate(data);
   };
@@ -65,6 +59,28 @@ export default function MemberInfo({ id }: Props) {
     deleteMutate(id);
   };
 
+  useEffect(() => {
+    if (memberdata.data && cohortData.data) {
+      const partId =
+        cohortData.data.parts?.find(
+          (part) => part.name === memberdata.data?.partName,
+        )?.id || 1;
+      const teamId =
+        cohortData.data.teams?.find(
+          (team) => team.name === memberdata.data?.teamName,
+        )?.id || 1;
+
+      reset({
+        name: memberdata.data.name,
+        loginId: memberdata.data.loginId,
+        phone: memberdata.data.phone,
+        cohortId: memberdata.data.generation,
+        partId,
+        teamId,
+      });
+    }
+  }, [memberdata.data, cohortData.data, reset]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={clsx("space-y-5 px-8")}>
       <RHFTextInput<MemberFormInputType>
@@ -72,42 +88,36 @@ export default function MemberInfo({ id }: Props) {
         name="name"
         label="이름"
         placeholder="홍길동"
-        defaultValue={memberdata.data?.name}
       />
       <RHFTextInput<MemberFormInputType>
         id="loginId"
         name="loginId"
         label="아이디"
         placeholder="아이디"
-        defaultValue={memberdata.data?.loginId}
       />
       <RHFSelect<MemberFormInputType, number>
         id="cohortId"
         name="cohortId"
         options={cohortsOptions}
         label="기수"
-        defaultValue={memberdata.data?.generation}
       />
       <RHFSelect<MemberFormInputType, number>
         id="partId"
         name="partId"
         options={partOptions}
         label="파트"
-        defaultValue={partId}
       />
       <RHFTextInput<MemberFormInputType>
         id="phone"
         name="phone"
         label="전화번호"
         placeholder="010-0000-0000"
-        defaultValue={memberdata.data?.phone}
       />
       <RHFSelect<MemberFormInputType, number>
         id="teamId"
         name="teamId"
         options={teamOptions}
         label="참여팀"
-        defaultValue={teamId}
       />
 
       <div>
