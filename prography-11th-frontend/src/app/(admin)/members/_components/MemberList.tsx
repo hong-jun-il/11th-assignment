@@ -132,7 +132,9 @@ export default function MemberList() {
         <Pagination totalPages={data.data?.totalPages ?? 1} />
       </div>
 
-      {modalIsOpen && <CreateMemberModal />}
+      {modalIsOpen && (
+        <CreateMemberModal onClose={() => setModalIsOpen(false)} />
+      )}
     </div>
   );
 }

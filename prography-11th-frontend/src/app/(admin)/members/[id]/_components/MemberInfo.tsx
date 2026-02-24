@@ -40,18 +40,19 @@ export default function MemberInfo({ id }: Props) {
     : [];
 
   const partOptions: OptionType<number>[] =
-    cohortData.data?.parts?.map((part) => ({
+    cohortData?.data?.parts?.map((part) => ({
       value: part.id,
       label: part.name,
     })) ?? [];
 
   const teamOptions: OptionType<number>[] =
-    cohortData.data?.teams?.map((team) => ({
+    cohortData?.data?.teams?.map((team) => ({
       value: team.id,
       label: team.name,
     })) ?? [];
 
   const onSubmit = (data: MemberFormOutputType) => {
+    console.log(data);
     updateMutate(data);
   };
 
@@ -60,7 +61,7 @@ export default function MemberInfo({ id }: Props) {
   };
 
   useEffect(() => {
-    if (memberdata.data && cohortData.data) {
+    if (memberdata.data && cohortData?.data) {
       const partId =
         cohortData.data.parts?.find(
           (part) => part.name === memberdata.data?.partName,
@@ -79,7 +80,7 @@ export default function MemberInfo({ id }: Props) {
         teamId,
       });
     }
-  }, [memberdata.data, cohortData.data, reset]);
+  }, [memberdata.data, cohortData?.data, reset]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={clsx("space-y-5 px-8")}>
@@ -94,6 +95,12 @@ export default function MemberInfo({ id }: Props) {
         name="loginId"
         label="아이디"
         placeholder="아이디"
+      />
+      <RHFTextInput<MemberFormInputType>
+        id="password"
+        name="password"
+        label="비밀번호"
+        placeholder="비밀번호"
       />
       <RHFSelect<MemberFormInputType, number>
         id="cohortId"

@@ -17,7 +17,7 @@ export default function Nav() {
     <nav
       className={clsx(
         "min-h-dvh w-1/4",
-        "flex flex-col gap-20",
+        "flex shrink-0 flex-col gap-20",
         "px-5 py-8",
         "bg-gray-300",
       )}

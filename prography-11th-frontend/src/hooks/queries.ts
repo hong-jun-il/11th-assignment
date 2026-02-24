@@ -1,12 +1,19 @@
 import { api } from "@/api/api";
-import { MemberSearchType } from "@/app/(admin)/members/_components/MemberSearch";
+import type { MemberSearchType } from "@/app/(admin)/members/_components/MemberSearch";
 import { PAGE_PER_COUNT } from "@/constants/pagination_count.const";
-import { AttendanceType } from "@/types/attendance.type";
+import type {
+  MemberAttendanceType,
+  SessionAttendanceType,
+} from "@/types/attendance.type";
 import type { MemberStatusType, MemberType } from "@/types/member.type";
-import { PaginationType } from "@/types/pagination.type";
+import type { PaginationType } from "@/types/pagination.type";
 import type { ResponseType } from "@/types/response.type";
-import { SessionType } from "@/types/session.type";
-import { useSuspenseQueries, useSuspenseQuery } from "@tanstack/react-query";
+import type { SessionType } from "@/types/session.type";
+import {
+  useQuery,
+  useSuspenseQueries,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 
 export type GetMembersRequestType = {
   page?: number;
@@ -103,7 +110,7 @@ type GetCohortResponseType = {
 };
 
 export function useGetCohort(generation: number) {
-  return useSuspenseQuery({
+  return useQuery({
     queryKey: ["cohort", generation],
     queryFn: async () => {
       const res = await api.get<Promise<ResponseType<GetCohortResponseType>>>(
@@ -112,6 +119,7 @@ export function useGetCohort(generation: number) {
 
       return res.data;
     },
+    enabled: !!generation,
   });
 }
 
@@ -147,14 +155,14 @@ export function useGetSessionAttendances({
     queries: ids.map((id) => ({
       queryKey: ["sessionAttendance", id],
       queryFn: async () => {
-        const res = await api.get<Promise<ResponseType<AttendanceType[]>>>(
-          `/admin/attendances/sessions/${id}/summary`,
-        );
+        const res = await api.get<
+          Promise<ResponseType<SessionAttendanceType[]>>
+        >(`/admin/attendances/sessions/${id}/summary`);
 
         return res.data;
       },
     })),
-    combine: (results): PaginationType<AttendanceType[]> => {
+    combine: (results): PaginationType<SessionAttendanceType[]> => {
       const allData = results.flatMap((result) => result.data?.data ?? []);
 
       const totalElements = allData.length;
@@ -171,6 +179,19 @@ export function useGetSessionAttendances({
         totalElements,
         totalPages,
       };
+    },
+  });
+}
+
+export function useGetMemberAttendances(id: number) {
+  return useSuspenseQuery({
+    queryKey: ["deposit history", id],
+    queryFn: async () => {
+      const res = await api.get<Promise<ResponseType<MemberAttendanceType>>>(
+        `admin/attendances/members/${id}`,
+      );
+
+      return res.data;
     },
   });
 }

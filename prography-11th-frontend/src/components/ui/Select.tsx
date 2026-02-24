@@ -31,11 +31,15 @@ export const Select = forwardRef<HTMLSelectElement, Props>(
         )}
         {...props}
       >
-        {options.map(({ value, label }) => (
-          <option key={value} value={value}>
-            {label}
-          </option>
-        ))}
+        {options.length > 0 ? (
+          options.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))
+        ) : (
+          <option value="">선택할 값이 없습니다</option>
+        )}
       </select>
     );
   },
