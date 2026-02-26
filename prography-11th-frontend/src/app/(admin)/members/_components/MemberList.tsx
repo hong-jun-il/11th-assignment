@@ -12,8 +12,8 @@ import Button from "@/components/ui/Button";
 import CreateMemberModal from "./CreateMember.modal";
 
 const tableHead = [
-  "순서",
   "이름",
+  "기수",
   "파트",
   "팀명",
   "아이디",
@@ -88,8 +88,10 @@ export default function MemberList() {
                     "transition-colors duration-150",
                   )}
                 >
-                  <th>{i + 1}</th>
-                  <td className={clsx("py-2 text-center")}>{member.name}</td>
+                  <th className={clsx("py-2 text-center")}>{member.name}</th>
+                  <td className={clsx("py-2 text-center")}>
+                    {member.generation}기
+                  </td>
                   <td className={clsx("py-2 text-center")}>
                     {member.partName}
                   </td>

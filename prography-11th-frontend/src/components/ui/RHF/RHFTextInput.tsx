@@ -3,7 +3,7 @@ import { TextInput } from "../TextInput";
 import { ComponentProps } from "react";
 import clsx from "clsx";
 
-type Props<T extends FieldValues> = Omit<ComponentProps<"input">, "name"> & {
+type Props<T extends FieldValues> = Omit<ComponentProps<"input">, "type"> & {
   id: string;
   name: Path<T>;
   label?: string;
@@ -36,7 +36,12 @@ export default function RHFTextInput<T extends FieldValues>({
               value={field.value ?? ""}
             />
             {error && (
-              <p className={clsx("px-1 text-xs text-red-500")}>
+              <p
+                className={clsx(
+                  "mt-1 px-1",
+                  "text-xs whitespace-nowrap text-red-500",
+                )}
+              >
                 {error.message}
               </p>
             )}

@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { ComponentProps, forwardRef } from "react";
 
-export type OptionType<T extends string | number = string> = {
+export type OptionType<T> = {
   value: T;
   label: string;
 };
@@ -32,11 +32,14 @@ export const Select = forwardRef<HTMLSelectElement, Props>(
         {...props}
       >
         {options.length > 0 ? (
-          options.map(({ value, label }) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))
+          <>
+            <option value="">선택해주세요</option>
+            {options.map(({ value, label }) => (
+              <option key={String(value)} value={value}>
+                {label}
+              </option>
+            ))}
+          </>
         ) : (
           <option value="">선택할 값이 없습니다</option>
         )}
@@ -44,3 +47,5 @@ export const Select = forwardRef<HTMLSelectElement, Props>(
     );
   },
 );
+
+Select.displayName = "Select";

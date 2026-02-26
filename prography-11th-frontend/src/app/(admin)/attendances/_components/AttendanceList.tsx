@@ -2,13 +2,17 @@
 
 import Button from "@/components/ui/Button";
 import Pagination from "@/components/ui/Pagination";
-import { useGetSessionAttendances, useGetSessions } from "@/hooks/queries";
+import {
+  useGetSessionAttendancesSummary,
+  useGetSessions,
+} from "@/hooks/queries";
 import { formatLocalDate } from "@/utils/formatDate";
 import clsx from "clsx";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAttendanceModal } from "./AttendanceModalProvider";
+import AttendanceModal from "../[id]/_components/Attendance.modal";
 
 const tableHead = [
-  "순서",
   "이름",
   "출석",
   "지각",
@@ -35,10 +39,13 @@ export default function AttendanceList() {
   const sessionIds = sessionData.data?.map((session) => session.id) || [];
 
   // 클라이언트에서 모든 데이터를 메모리에 올려놓고 페이지네이션을 구현하기에 prefetch를 하지 않습니다
-  const { content, totalElements, totalPages } = useGetSessionAttendances({
-    ids: sessionIds,
-    page: currentPage - 1,
-  });
+  const { content, totalElements, totalPages } =
+    useGetSessionAttendancesSummary({
+      ids: sessionIds,
+      page: currentPage - 1,
+    });
+
+  const { openModal } = useAttendanceModal();
 
   return (
     <div className={clsx("flex flex-1 flex-col justify-between gap-5", "px-3")}>
@@ -71,10 +78,9 @@ export default function AttendanceList() {
                     "transition-colors duration-150",
                   )}
                 >
-                  <th>{i + 1}</th>
-                  <td className={clsx("py-2 text-center")}>
+                  <th className={clsx("py-2 text-center")}>
                     {attendance.memberName}
-                  </td>
+                  </th>
                   <td className={clsx("py-2 text-center")}>
                     {attendance.present}
                   </td>
@@ -110,7 +116,7 @@ export default function AttendanceList() {
       </div>
 
       <div className={clsx("flex justify-end")}>
-        <Button text="추가" />
+        <Button text="추가" onClick={() => openModal()} />
       </div>
 
       <div className={clsx("flex justify-center")}>

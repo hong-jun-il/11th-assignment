@@ -51,9 +51,15 @@ export default function MemberInfo({ id }: Props) {
       label: team.name,
     })) ?? [];
 
-  const onSubmit = (data: MemberFormOutputType) => {
-    console.log(data);
-    updateMutate(data);
+  const onSubmit = (data: MemberFormInputType) => {
+    const formattedData: MemberFormOutputType = {
+      ...data,
+      cohortId: Number(data.cohortId),
+      partId: Number(data.partId),
+      teamId: Number(data.teamId),
+    };
+
+    updateMutate(formattedData);
   };
 
   const onDelete = (id: number) => {
@@ -78,6 +84,7 @@ export default function MemberInfo({ id }: Props) {
         cohortId: memberdata.data.generation,
         partId,
         teamId,
+        password: "password",
       });
     }
   }, [memberdata.data, cohortData?.data, reset]);
@@ -95,12 +102,6 @@ export default function MemberInfo({ id }: Props) {
         name="loginId"
         label="아이디"
         placeholder="아이디"
-      />
-      <RHFTextInput<MemberFormInputType>
-        id="password"
-        name="password"
-        label="비밀번호"
-        placeholder="비밀번호"
       />
       <RHFSelect<MemberFormInputType, number>
         id="cohortId"

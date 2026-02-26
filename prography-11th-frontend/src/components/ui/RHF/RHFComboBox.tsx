@@ -1,21 +1,19 @@
 "use client";
 
 import { ComponentProps } from "react";
-import { OptionType, Select } from "../Select";
+import { OptionType } from "../Select";
 import { FieldValues, Path, useFormContext, Controller } from "react-hook-form";
 import clsx from "clsx";
+import { ComboBox } from "../ComboBox";
 
-type Props<T extends FieldValues, F> = Omit<
-  ComponentProps<"select">,
-  "name"
-> & {
+type Props<T extends FieldValues, F> = ComponentProps<"input"> & {
   id: string;
   name: Path<T>;
   options: OptionType<F>[];
   label?: string;
 };
 
-export default function RHFSelect<T extends FieldValues, F>({
+export default function RHFComboBox<T extends FieldValues, F>({
   id,
   name,
   options,
@@ -25,7 +23,7 @@ export default function RHFSelect<T extends FieldValues, F>({
   const { control } = useFormContext<T>();
 
   return (
-    <div className="flex flex-col">
+    <div className="w-full">
       {label && (
         <label htmlFor={id} className={clsx("text-md", "mb-2 inline-block")}>
           {label}
@@ -36,14 +34,9 @@ export default function RHFSelect<T extends FieldValues, F>({
         control={control}
         render={({ field, fieldState: { error } }) => (
           <>
-            <Select {...props} id={id} options={options} {...field} />
+            <ComboBox {...field} options={options} {...props} />
             {error && (
-              <p
-                className={clsx(
-                  "mt-1 px-1",
-                  "text-xs whitespace-nowrap text-red-500",
-                )}
-              >
+              <p className={clsx("px-1 text-xs text-red-500")}>
                 {error.message?.toString()}
               </p>
             )}

@@ -76,13 +76,20 @@ function MemberForm({ onClose }: Props) {
 
   const { mutate } = useCreateMember(onClose);
 
-  const onSubmit = async (data: MemberFormOutputType) => {
+  const onSubmit = async (data: MemberFormInputType) => {
     if (data.partId === 0 || data.teamId === 0) {
       alert("올바른 참여팀 혹은 파트를 선택해주세요");
       return;
     }
 
-    mutate(data);
+    const formattedData: MemberFormOutputType = {
+      ...data,
+      cohortId: Number(data.cohortId),
+      partId: Number(data.partId),
+      teamId: Number(data.teamId),
+    };
+
+    mutate(formattedData);
   };
 
   useEffect(() => {
@@ -95,7 +102,7 @@ function MemberForm({ onClose }: Props) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={clsx("w-[50%]", "space-y-3 px-5 py-5", "rounded-lg bg-white")}
+      className={clsx("w-1/2", "space-y-3 px-5 py-5", "rounded-lg bg-white")}
     >
       <RHFTextInput<MemberFormInputType>
         id="name"
