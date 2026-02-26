@@ -1,8 +1,10 @@
 "use client";
 
 import clsx from "clsx";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import logo from "@/assets/logo/logo.webp";
 
 export default function Nav() {
   const pathname = usePathname();
@@ -22,7 +24,9 @@ export default function Nav() {
         "bg-gray-300",
       )}
     >
-      <h1 className={clsx("text-3xl font-bold")}>로고</h1>
+      <div className={clsx("aspect-auto w-1/2", "mx-auto")}>
+        <Image src={logo} alt="logo" />
+      </div>
       <ul className={clsx("w-full", "flex flex-1 flex-col items-center gap-1")}>
         {links.map(({ name, path }) => {
           const isActive = pathname.includes(path);
