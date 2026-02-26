@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 1. 실행 방법
 
-## Getting Started
+1. 백엔드 서버 실행(cli 명령어 동일)
+2. pnpm dev로 프론트엔드 실행
 
-First, run the development server:
+## 1-1. 환경 변수(필수 X)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+`NEXT_PUBLIC_BASE_URL=http://localhost:8080/api/v1`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# 2. AI 사용 방법
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+타입스크립트 및 zod의 유효성 검사 에러 등, 주로 컴파일 과정에서의 타입 에러를 디버깅하는 용도로 AI를 사용하였습니다.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# 3. 프로젝트 리뷰
 
-## Learn More
+일주일이라는 시간동안 고객에게 서비스를 납품한다는 생각으로 필수 요구사항을 1차 릴리즈 타겟으로 설정하여 프로젝트를 진행했습니다.
 
-To learn more about Next.js, take a look at the following resources:
+개발 과정에서 짧은 시간 내에 복잡한 도메인과 API 구조를 파악하고, 유효성 검사 등 UX 향상을 위한 로직을 구축하는 데 집중했습니다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+성능 최적화를 위해 react-hook-form의 비제어 컴포넌트를 채택하였으나, 비제어 방식이 리렌더링을 트리거하지 않아 실시간 에러 메시지 노출이 되지 않는 이슈가 있었고, 이슈의 원인을 파악하고 해결하는데 많은 시간을 들였습니다.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+마감 기한으로 인해 출결 기록 생성/수정 기능을 다 구현하지 못한 채 마무리 되었으며, 안정화되지 않은 기능들은 이후 기회가 있다면, 혹은 개인적으로 기능을 완성해볼 예정입니다.
 
-## Deploy on Vercel
+zod와 react-hook-form 등의 숙련도가 아직은 미숙함을 깨달을 수 있었고, 짧은 일정 속에서 도메인에 대한 높은 이해도가 개발 속도에 얼마나 영향을 미치는지 알 수 있었습니다.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+프로젝트의 거시적인 구조를 빠르게 꿰뚫어보는 안목과, 초기 설계 단계에서 적극적인 분석을 통해 일정 내에 차질 없이 구현을 할 수 있는 역량을 기르려고 합니다.
